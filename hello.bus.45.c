@@ -19,6 +19,7 @@
 
 #define output(directions,pin) (directions |= pin) // set port direction for output
 #define input(directions,pin) (directions &= (~pin)) // set port direction for input
+// todo: set and clear macros seemed to be reversed
 #define set(port,pin) (port |= pin) // set port pin
 #define clear(port,pin) (port &= (~pin)) // clear port pin
 #define pin_test(pins,pin) (pins & pin) // test for port pin
@@ -38,19 +39,13 @@
 #define serial_pin_out (1 << PB4)
 
 void get_char(volatile unsigned char *pins, unsigned char pin, char *rxbyte) {
-   //
    // read character into rxbyte on pins pin
-   //    assumes line driver (inverts bits)
-   //
+   // assumes line driver (inverts bits)
    *rxbyte = 0;
-   while (pin_test(*pins,pin))
-      //
-      // wait for start bit
-      //
-      ;
-   //
+   // wait for start bit
+   while (pin_test(*pins,pin));
+
    // delay to middle of first data bit
-   //
    half_bit_delay();
    bit_delay();
    //
@@ -187,6 +182,8 @@ void flash() {
    clear(led_port, led_pin);
    _delay_ms(500);
    set(led_port, led_pin);
+   _delay_ms(500);
+
 }
 int main(void) {
    //
@@ -208,7 +205,7 @@ int main(void) {
 
    // write a message when we start
    output(serial_direction, serial_pin_out);
-   static const char message[] PROGMEM = "hello from version 2";
+   static const char message[] PROGMEM = "hello from version 4";
    put_string(&serial_port, serial_pin_out, (PGM_P) message);
    put_char(&serial_port, serial_pin_out, 10); // new line
 
@@ -227,11 +224,8 @@ int main(void) {
          put_string(&serial_port, serial_pin_out, (PGM_P) message);
          put_char(&serial_port, serial_pin_out, chr);
          put_char(&serial_port, serial_pin_out, 10); // new line
-         _delay_ms(100); // this is also done in flash()??
          flash();
-         _delay_ms(100);
          flash();
-         _delay_ms(100);
        }
    }
 }
