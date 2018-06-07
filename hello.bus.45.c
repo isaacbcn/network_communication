@@ -1,11 +1,7 @@
-//
 // hello.bus.45.c
-//
 // 9600 baud serial bus hello-world
-//
 // Neil Gershenfeld
 // 11/24/10
-//
 // (c) Massachusetts Institute of Technology 2010
 // Permission granted for experimental and personal use;
 // license for commercial sale available from MIT.
@@ -19,7 +15,7 @@
 
 #define output(directions,pin) (directions |= pin) // set port direction for output
 #define input(directions,pin) (directions &= (~pin)) // set port direction for input
-// todo: set and clear macros seemed to be reversed
+// Todo: set and clear macros seemed to be reversed
 #define set(port,pin) (port |= pin) // set port pin
 #define clear(port,pin) (port &= (~pin)) // clear port pin
 #define pin_test(pins,pin) (pins & pin) // test for port pin
@@ -44,13 +40,10 @@ void get_char(volatile unsigned char *pins, unsigned char pin, char *rxbyte) {
    *rxbyte = 0;
    // wait for start bit
    while (pin_test(*pins,pin));
-
    // delay to middle of first data bit
    half_bit_delay();
    bit_delay();
-   //
    // unrolled loop to read data bits
-   //
    if pin_test(*pins,pin)
       *rxbyte |= (1 << 0);
    else
@@ -90,20 +83,14 @@ void get_char(volatile unsigned char *pins, unsigned char pin, char *rxbyte) {
       *rxbyte |= (1 << 7);
    else
       *rxbyte |= (0 << 7);
-   //
    // wait for stop bit
-   //
    bit_delay();
    half_bit_delay();
 }
-
 void put_char(volatile unsigned char *port, unsigned char pin, char txchar) {
-   //
    // send character in txchar on port pin
    //    assumes line driver (inverts bits)
-   //
    // start bit
-   //
    clear(*port,pin);
    bit_delay();
    //
@@ -149,22 +136,16 @@ void put_char(volatile unsigned char *port, unsigned char pin, char txchar) {
    else
       clear(*port,pin);
    bit_delay();
-   //
    // stop bit
-   //
    set(*port,pin);
    bit_delay();
-   //
    // char delay
-   //
    bit_delay();
 }
 
 void put_string(volatile unsigned char *port, unsigned char pin, PGM_P str) {
-   //
    // send character in txchar on port pin
    //    assumes line driver (inverts bits)
-   //
    static char chr;
    static int index;
    index = 0;
@@ -175,7 +156,7 @@ void put_string(volatile unsigned char *port, unsigned char pin, PGM_P str) {
       } while (chr != 0);
 }
 //LED flashes with a long delay
-// Note: _delay_ms requires complie time constant otherwise compliation failes in avr/include/util/delay.h
+// Note: _delay_ms requires compile time constant otherwise compliation failes in avr/include/util/delay.h
 void flash_long() {
    clear(led_port, led_pin);
    _delay_ms(500);
@@ -183,7 +164,7 @@ void flash_long() {
    _delay_ms(500);
 }
 //LED flashes with a short delay
-// Note: _delay_ms requires complie time constant otherwise compliation failes in that avr/include/util/delay.h
+// Note: _delay_ms requires compile time constant otherwise compliation failes in that avr/include/util/delay.h
 void flash_short() {
    clear(led_port, led_pin);
    _delay_ms(100);
@@ -197,7 +178,7 @@ void print_version(){
   static const char message[] PROGMEM = "hello from version 6";
   put_string(&serial_port, serial_pin_out, (PGM_P) message);
   put_char(&serial_port, serial_pin_out, 10); // new line
-  
+
 }
 
 int main() {
@@ -227,6 +208,7 @@ int main() {
       flash_long();
       if (chr == node_id) {
          //if this message is for us reply back with a message and flash led
+         //Todo: Create a function for print name
          output(serial_direction, serial_pin_out);
          static const char message[] PROGMEM = "i am node ";
          put_string(&serial_port, serial_pin_out, (PGM_P) message);
