@@ -15,7 +15,7 @@
 #include <avr/pgmspace.h>
 #include <string.h>
 // This macro tells the identity of the node
-#define node_id '0' 
+#define node_id '0'
 
 #define output(directions,pin) (directions |= pin) // set port direction for output
 #define input(directions,pin) (directions &= (~pin)) // set port direction for input
@@ -25,8 +25,7 @@
 #define bit_test(byte,bit) (byte & (1 << bit)) // test for bit set
 #define bit_delay_time 100 // bit delay for 9600 with overhead
 #define bit_delay() _delay_us(bit_delay_time) // RS232 bit delay
-#define half_bit_delay() _delay_us(bit_delay_time/2) // RS232 half bit dela
-//where we had led_delay now we have led _delay_ms(d) // LED flash delay
+#define half_bit_delay() _delay_us(bit_delay_time/2) // RS232 half bit delay
 
 #define led_port PORTB
 #define led_direction DDRB
@@ -220,7 +219,7 @@ int main(void) {
       // note: the get_char() function call blocks until it can read on serial_pin_in.
       get_char(&serial_pins, serial_pin_in, &chr);
       // note: this also delays by led_delay()
-      flash(); 
+      flash();
       if (chr == node_id) {
          //if this message is for us reply back with a message and flash led
          output(serial_direction, serial_pin_out);
@@ -232,7 +231,7 @@ int main(void) {
          flash();
          _delay_ms(100);
          flash();
-         _delay_ms(100);       
+         _delay_ms(100);
        }
    }
 }
