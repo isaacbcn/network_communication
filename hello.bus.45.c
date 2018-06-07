@@ -191,6 +191,15 @@ void flash_short() {
    _delay_ms(100);
 }
 
+void print_version(){
+  // write a message when we start
+  output(serial_direction, serial_pin_out);
+  static const char message[] PROGMEM = "hello from version 6";
+  put_string(&serial_port, serial_pin_out, (PGM_P) message);
+  put_char(&serial_port, serial_pin_out, 10); // new line
+  
+}
+
 int main() {
    // main
    static char chr;
@@ -207,11 +216,7 @@ int main() {
    set(led_port, led_pin);
    output(led_direction, led_pin);
 
-   // write a message when we start
-   output(serial_direction, serial_pin_out);
-   static const char message[] PROGMEM = "hello from version 6";
-   put_string(&serial_port, serial_pin_out, (PGM_P) message);
-   put_char(&serial_port, serial_pin_out, 10); // new line
+   print_version();
 
    //
    // main loop
