@@ -174,21 +174,24 @@ void put_string(volatile unsigned char *port, unsigned char pin, PGM_P str) {
       ++index;
       } while (chr != 0);
 }
-
-void flash() {
-   //
-   // LED flash delay
-   //
+//LED flashes with a long delay
+// Note: _delay_ms requires complie time constant otherwise compliation failes in avr/include/util/delay.h
+void flash_long() {
    clear(led_port, led_pin);
    _delay_ms(500);
    set(led_port, led_pin);
    _delay_ms(500);
-
+}
+//LED flashes with a short delay
+// Note: _delay_ms requires complie time constant otherwise compliation failes in that avr/include/util/delay.h
+void flash_short() {
+   clear(led_port, led_pin);
+   _delay_ms(100);
+   set(led_port, led_pin);
+   _delay_ms(100);
 }
 int main(void) {
-   //
    // main
-   //
    static char chr;
    //
    // set clock divider to /1
@@ -205,7 +208,7 @@ int main(void) {
 
    // write a message when we start
    output(serial_direction, serial_pin_out);
-   static const char message[] PROGMEM = "hello from version 4";
+   static const char message[] PROGMEM = "hello from version 6";
    put_string(&serial_port, serial_pin_out, (PGM_P) message);
    put_char(&serial_port, serial_pin_out, 10); // new line
 
@@ -215,8 +218,7 @@ int main(void) {
    while (1) {
       // note: the get_char() function call blocks until it can read on serial_pin_in.
       get_char(&serial_pins, serial_pin_in, &chr);
-      // note: this also delays by led_delay()
-      flash();
+      flash_long();
       if (chr == node_id) {
          //if this message is for us reply back with a message and flash led
          output(serial_direction, serial_pin_out);
@@ -224,8 +226,8 @@ int main(void) {
          put_string(&serial_port, serial_pin_out, (PGM_P) message);
          put_char(&serial_port, serial_pin_out, chr);
          put_char(&serial_port, serial_pin_out, 10); // new line
-         flash();
-         flash();
+         flash_short();
+         flash_short();
        }
    }
 }
