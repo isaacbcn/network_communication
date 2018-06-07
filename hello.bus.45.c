@@ -190,7 +190,8 @@ void flash_short() {
    set(led_port, led_pin);
    _delay_ms(100);
 }
-int main(void) {
+
+int main() {
    // main
    static char chr;
    //
@@ -226,6 +227,7 @@ int main(void) {
          put_string(&serial_port, serial_pin_out, (PGM_P) message);
          put_char(&serial_port, serial_pin_out, chr);
          put_char(&serial_port, serial_pin_out, 10); // new line
+         //Todo: we might want to flash manytimes here by adding a loop
          flash_short();
          flash_short();
        }
